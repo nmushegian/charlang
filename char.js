@@ -1,38 +1,27 @@
-
-const code = String.raw`
-%show(x,y) {
-  -s = ''
-  ^s
-}
--it = @%(s,f) { ~f() }
--send = < console.log('')
-it('is a test', @|{
-  -x = ~send()
-  show(x, (|{})())
-})
-
-`
-
 const lang = {
-    ['#']: ' arguments ',
-    ['+']: ' let ',
     ['-']: ' const ',
+    ['+']: ' let ',
+    ['#']: ' arguments ',
     ['&']: ' this ',
     ['^']: ' return ',
     ['@']: ' async ',
     ['~']: ' await ',
-    ['/']: ' ()=> ',
     ['>']: ' => ',
     ['<']: ' ()=> ',
     ['%']: ' function ',
     ['|']: ' function ()',
 }
 
-
-out = code
-for ([k,v] of Object.entries(lang)) {
-    out = out.replaceAll(k, v)
+module.exports.compile = (code) => {
+    try {
+        let out = code;
+        for ([k,v] of Object.entries(lang)) {
+            out = out.replaceAll(k, v)
+        }
+        const f = Function(out)
+        return f
+    } catch (e) {
+        console.log(code)
+        throw e
+    }
 }
-const f = Function(out)
-console.log(f.toString())
-f()
